@@ -1,0 +1,131 @@
+from tkinter import *
+import tkinter.messagebox
+import mysql.connector
+from tkinter import messagebox
+from tkinter.ttk import Combobox
+connectiondb = mysql.connector.connect(host="localhost",user="root",passwd="janu",port='3306',database="collage")
+cursordb = connectiondb.cursor()
+def login():
+    global root2
+    root2 = Toplevel(root)
+    root2.title("collage Login")
+    root2.geometry("450x300")
+    root2.config(bg="white")
+    global username_verification
+    global password_verification
+    Label(root2, text='Please Enter your login Details', bd=6,font=('arial', 12, 'bold'), fg="black", bg="red",width=300).pack()
+    username_verification = StringVar()
+    password_verification = StringVar()
+    Label(root2, text="").pack()
+    Label(root2, text="Username :", fg="blue", font=('arial', 12, 'bold')).pack()
+    Entry(root2, textvariable=username_verification).pack()
+    Label(root2, text="").pack()
+    Label(root2, text="Password :", fg="blue", font=('arial', 12, 'bold')).pack()
+    Entry(root2, textvariable=password_verification, show="*").pack()
+    Label(root2, text="").pack()
+    Button(root2, text="Login", bg="Black", fg='white', relief="groove", font=('arial', 12, 'bold'),command=login_verification).pack()
+    Label(root2, text="")
+def logged_destroy():
+    logged.destroy()
+    root2.destroy()
+def failed_destroy():
+    failed_message.destroy()
+
+def Submit():
+    if Submit:
+        messagebox.showinfo("Welcome to login", "Your details has been saved successfully")
+def logged():
+    window = Tk()
+    window.title('Welcome to login')
+    window.geometry("400x450+50+40")
+    window.config(bg="blue")
+    lbl = Label(window, text="First Name:", fg='black', font=("helvetica", 14))
+    lbl.place(x=20, y=40)
+    txtfld = Entry(window, text="First Name", bd=5)
+    txtfld.place(x=140, y=40)
+    lbl = Label(window, text="Address    :", fg='black', font=("helvetica", 14))
+    lbl.place(x=20, y=80)
+    txtfld = Entry(window, text="Address", bd=5)
+    txtfld.place(x=140, y=80, height=30, width=130)
+    lbl = Label(window, text="Email ID    :", fg='black', font=("helvetica", 14))
+    lbl.place(x=20, y=120)
+    txtfld = Entry(window, text="Email", bd=5)
+    txtfld.place(x=140, y=120)
+    lbl = Label(window, text="Gender     :", fg='black', font=("helvetica", 14))
+    lbl.place(x=20, y=160)
+    v0 = IntVar()
+    v0.set(1)
+    r1 = Radiobutton(window, text='Male', variable=v0, value=1)
+    r2 = Radiobutton(window, text='Female', variable=v0, value=2)
+    r1.place(x=140, y=160)
+    r2.place(x=200, y=160)
+    lbl = Label(window, text="City            :", fg='black', font=("helvetica", 14))
+    lbl.place(x=20, y=200)
+    var = StringVar()
+    var.set("Andhra")
+    data = ("Andhra", "Karnataka", "TamilNadu", "Kerala")
+    cb = Combobox(window, values=data)
+    cb.place(x=130, y=200)
+    lbl = Label(window, text="Password  :", fg='black', font=("helvetica", 14))
+    lbl.place(x=20, y=240)
+    txtfld = Entry(window, text="Password", bd=5, show="*")
+    txtfld.place(x=140, y=240)
+    lbl = Label(window, text="Re enter    :", fg='black', font=("helvetica", 14))
+    lbl.place(x=20, y=280)
+    txtfld = Entry(window, text="Re enter:", bd=5, show="*")
+    txtfld.place(x=140, y=280)
+    lbl = Label(window, text="How you know about this..?", fg='blue', font=("helvetica", 14))
+    lbl.place(x=20, y=320)
+    v1 = IntVar()
+    v2 = IntVar()
+    v3 = IntVar()
+    c1 = Checkbutton(window, text="Friend", fg='black',variable=v1)
+    c2 = Checkbutton(window, text="WhatsApp",fg='black', variable=v2)
+    c3 = Checkbutton(window, text="Gmail",fg='black', variable=v3)
+    c1.place(x=20, y=360)
+    c2.place(x=100, y=360)
+    c3.place(x=200, y=360)
+    btn = Button(window, text="Submit", fg='red',command=Submit)
+    btn.place(x=270, y=400)
+def failed():
+    global failed_message
+    failed_message = Toplevel(root2)
+    failed_message.title("Invalid Message")
+    failed_message.geometry("500x100")
+    Label(failed_message, text="Invalid Username or Password", fg="red", font="bold").pack()
+    Label(failed_message, text="").pack()
+    Button(failed_message,text="Ok", bg="lightgreen", fg='red', relief="groove", font=('arial', 12, 'bold'), command=failed_destroy).pack()
+def login_verification():
+    user_verification = username_verification.get()
+    pass_verification = password_verification.get()
+    sql = "select * from login where username = %s and password = %s"
+    cursordb.execute(sql, [user_verification, pass_verification])
+    results = cursordb.fetchall()
+    if results:
+        for i in results:
+            logged()
+            break
+    else:
+        failed()
+def Exit():
+    wayOut = tkinter.messagebox.askyesno("Login ", "Do you want to exit ")
+    if wayOut > 0:
+        root.destroy()
+        return
+def main_display():
+    global root
+    root = Tk()
+    root.config(bg="White")
+    root.title("Login ")
+    root.geometry("500x350")
+    Label(root,text='Welcome to login',  bd=20, font=('arial', 20, 'bold'), fg="Black",
+                   bg="red",width=300).pack()
+    Label(root,text="").pack()
+    Button(root,text='Log In', height="1",width="10", bd=10, font=('arial', 12, 'bold'), fg="white",
+                   bg="Black",command=login).pack()
+    Label(root,text="").pack()
+    Button(root,text='Exit', height="1",width="10", bd=10, font=('arial', 12, 'bold'), fg="white",
+                   bg="Black",command=Exit).pack()
+    Label(root,text="").pack()
+main_display()
+root.mainloop()
